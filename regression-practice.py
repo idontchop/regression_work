@@ -39,7 +39,7 @@ plt.ylabel('GPA')
 
 
 plt.figure(2)
-sns.set(style="whitegrid")
+sns.set(style="darkgrid")
 sns.residplot(x1, y, lowess=True, color="green")
 
 plt.figure(3)
