@@ -12,9 +12,16 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
 import sklearn
+import platform
 
-data = pandas.read_csv('~/PythonWorkspace/simple-linear.csv')
-datadata = pandas.read_csv('~/PythonWorkspace/simple-linear.csv')
+if ( platform.system() == 'Windows'):
+    csvFile = "simple-linear.csv"
+else:
+    csvFile = '~/PythonWorkspace/simple-linear.csv'
+    
+data = pandas.read_csv(csvFile)
+datadata = pandas.read_csv(csvFile)
+
 
 
 y = data['GPA']
