@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sklearn
 import platform
+from sklearn.linear_model import LinearRegression
 
 if ( platform.system() == 'Windows'):
     csvFile = "simple-linear.csv"
@@ -52,3 +53,16 @@ sns.residplot(x1, y, lowess=True, color="green")
 plt.figure(3)
 sns.set(style = "darkgrid")
 sns.residplot(x1, y, label="GPA Regression Residual", color ="brown")
+
+
+# sklearn
+reg = LinearRegression()
+
+reg.fit(x1.values.reshape(84,1),y)
+x_mat = x1.values.reshape(-1,1)
+
+print(reg.score(x_mat,y))
+
+new_data = pandas.DataFrame( data= [1900,2400], columns=['SAT'])
+print(reg.predict(new_data))
+
