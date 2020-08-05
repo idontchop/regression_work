@@ -15,54 +15,45 @@ import sklearn
 import platform
 from sklearn.linear_model import LinearRegression
 
+sns.set( style="darkgrid")
+
 if ( platform.system() == 'Windows'):
-    csvFile = "simple-linear.csv"
+    csvFile = "Clean Data.xlsx"
 else:
-    csvFile = '~/PythonWorkspace/simple-linear.csv'
+    csvFile = '~/PythonWorkspace/Clean Data.xlsx'
     
-data = pandas.read_csv(csvFile)
-datadata = pandas.read_csv(csvFile)
+data = pandas.read_excel(csvFile)
 
 
+# Column names
+incident = 'Event Clearance Group'
+officers = 'OFFICERS_AT_SCENE'
+district = 'District/Sector'
+date = 'Event Clearance Data'
 
-y = data['GPA']
-x1 = data['SAT']
+#print(data.describe())
+#print(data['District/Sector'].count())
 
-plt.figure(1)
-plt.scatter(x1,y)
-plt.xlabel('SAT', fontsize=20)
-plt.ylabel('GPA', fontsize=20)
-plt.show()
-
-x = sm.add_constant(x1)
-x
-results = sm.OLS(y,x).fit()
-results.summary()
-
-plt.scatter(x1,y)
-yhat = .0017 * x1 + .275
-fig = plt.plot(x1, yhat, lw=1, c='red', label='regression')
-plt.xlabel('SAT')
-plt.ylabel('GPA')
+# group by district and sum officers
+districtCount = data.\
+    groupby(district)\
+    .agg( {incident: 'count', officers: 'sum'} )\
+    .rename(columns={incident: '# Incidents', officers: '# officers'})
 
 
-plt.figure(2)
-sns.set(style="darkgrid")
-sns.residplot(x1, y, lowess=True, color="green")
-
-plt.figure(3)
-sns.set(style = "darkgrid")
-sns.residplot(x1, y, label="GPA Regression Residual", color ="brown")
+# create plot with all data      
+x = districtCount['# Incidents']
+x_matrix = x.values.reshape(-1,1)
+y = districtCount['# officers']
 
 
 # sklearn
 reg = LinearRegression()
 
-reg.fit(x1.values.reshape(84,1),y)
-x_mat = x1.values.reshape(-1,1)
+reg.fit(x_matrix,y)
 
-print(reg.score(x_mat,y))
+print(reg.score(x_matrix,y), "\n", reg.coef_)
+predictValues = pandas.DataFrame(data=[165,20])
+print(reg.predict(predictValues))
 
-new_data = pandas.DataFrame( data= [1900,2400], columns=['SAT'])
-print(reg.predict(new_data))
 
