@@ -14,7 +14,11 @@ import seaborn as sns
 import sklearn
 import platform
 from sklearn.linear_model import LinearRegression
+from sklearn.feature_selection import f_regression
+from sklearn.preprocessing import StandardScaler
+from random import randrange
 
+scaler = StandardScaler()
 sns.set( style="darkgrid")
 
 if ( platform.system() == 'Windows'):
@@ -40,20 +44,44 @@ districtCount = data.\
     .agg( {incident: 'count', officers: 'sum'} )\
     .rename(columns={incident: '# Incidents', officers: '# officers'})
 
+# Create a rand 1,2,3 column
+numbers_list = []
+for i in range(len(districtCount)):
+    numbers_list.append(randrange(3)+1)
+    
+#districtCount['Rand'] = numbers_list;
 
 # create plot with all data      
-x = districtCount['# Incidents']
-x_matrix = x.values.reshape(-1,1)
+x = districtCount[['# Incidents']]
+x_matrix = x
 y = districtCount['# officers']
 
+
+    
 
 # sklearn
 reg = LinearRegression()
 
-reg.fit(x_matrix,y)
+scaler.fit(x_matrix)
+x_scaled = scaler.transform(x_matrix)
+#print(x_scaled, numpy.mean(x_matrix))
+
+reg.fit(x_scaled,y)
+
+p_values = f_regression(x_scaled,y)[1]
+print(p_values.round(3))
 
 print(reg.score(x_matrix,y), "\n", reg.coef_)
-predictValues = pandas.DataFrame(data=[165,20])
-print(reg.predict(predictValues))
 
+print(districtCount.describe())
 
+## Summary
+reg_summary = pandas.DataFrame([['Bias'],['# Incidents']], columns = ['Features'])
+reg_summary['Weights'] = reg.intercept_, reg.coef_[0]
+
+print(reg_summary)
+
+new_data = pandas.DataFrame(data=[[32],[135]],columns=['# Incidents'])
+new_data_scaled = scaler.transform(new_data)
+print("--\n",new_data_scaled,"\n--")
+print(reg.predict(new_data_scaled))
