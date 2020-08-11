@@ -49,10 +49,10 @@ numbers_list = []
 for i in range(len(districtCount)):
     numbers_list.append(randrange(3)+1)
     
-#districtCount['Rand'] = numbers_list;
+districtCount['Rand'] = numbers_list;
 
 # create plot with all data      
-x = districtCount[['# Incidents']]
+x = districtCount[['# Incidents','Rand']]
 x_matrix = x
 y = districtCount['# officers']
 
@@ -76,12 +76,20 @@ print(reg.score(x_matrix,y), "\n", reg.coef_)
 print(districtCount.describe())
 
 ## Summary
-reg_summary = pandas.DataFrame([['Bias'],['# Incidents']], columns = ['Features'])
-reg_summary['Weights'] = reg.intercept_, reg.coef_[0]
+reg_summary = pandas.DataFrame([['Bias'],['# Incidents'],['Rand']], columns = ['Features'])
+reg_summary['Weights'] = reg.intercept_, reg.coef_[0], reg.coef_[1]
 
 print(reg_summary)
 
-new_data = pandas.DataFrame(data=[[32],[135]],columns=['# Incidents'])
+new_data = pandas.DataFrame(data=[[32,1],[135,1]],columns=['# Incidents','Rand'])
 new_data_scaled = scaler.transform(new_data)
 print("--\n",new_data_scaled,"\n--")
 print(reg.predict(new_data_scaled))
+
+#sns.distplot(districtCount['Rand'])
+
+districtCount['log_incidents'] = numpy.log(districtCount['# Incidents'])
+
+plt.figure(1)
+plt.scatter(districtCount['log_incidents'], districtCount['# officers'])
+plt.show()
