@@ -17,6 +17,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import f_regression
 from sklearn.preprocessing import StandardScaler
 from random import randrange
+from LinearRegressionWithPValues import LinearRegressionWithPValues 
 
 scaler = StandardScaler()
 sns.set( style="darkgrid")
@@ -60,7 +61,7 @@ y = districtCount['# officers']
     
 
 # sklearn
-reg = LinearRegression()
+reg = LinearRegressionWithPValues()
 
 scaler.fit(x_matrix)
 x_scaled = scaler.transform(x_matrix)
